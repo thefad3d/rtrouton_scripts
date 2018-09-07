@@ -1,1 +1,0 @@
-This script checks 10.7 and 10.8 Macs to see if Gatekeeper is disabled. If Gatekeeper is disabled, script returns "Disabled". Any other status will result in script returning "Active".

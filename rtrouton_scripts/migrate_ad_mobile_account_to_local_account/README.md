@@ -31,3 +31,8 @@ This script is designed to convert an Active Directory mobile account to a local
 This script is adapted from Patrick Gallagher's MigrateUserHomeToDomainAcct.sh script, with additional inspiration by Lisa Davies's Perl script to migrate AD mobile accounts to local accounts:
 
 [http://lisacherie.com/?p=239](http://lisacherie.com/?p=239)
+
+This Fork:
+ 1. Removed user choice for unbind to AD. Set to always unbind if bound.
+ 2. Removed user selection. A loop will convert all AD users on the machine.
+ 3. Give each converted account local admin rights.

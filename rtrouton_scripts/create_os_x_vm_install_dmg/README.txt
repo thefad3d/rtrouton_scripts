@@ -1,1 +1,0 @@
-create_os_x_vm_install_dmg has moved to its own repo. Please go to https://github.com/rtrouton/create_os_x_vm_install_dmg for the latest version of the create_os_x_vm_install_dmg script and support files.

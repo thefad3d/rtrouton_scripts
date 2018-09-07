@@ -1,1 +1,0 @@
-This script uninstalls the Tanium Mac client on Mac OS X 10.5.x and later. It should stop the Tanium agent software and remove all Tanium application, settings and receipts files.

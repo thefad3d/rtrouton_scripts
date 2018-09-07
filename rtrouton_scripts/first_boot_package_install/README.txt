@@ -1,1 +1,0 @@
-First Boot Package Install has moved to its own repo. Please go to https://github.com/rtrouton/First-Boot-Package-Install for the latest version of First Boot Package Install.pkg.

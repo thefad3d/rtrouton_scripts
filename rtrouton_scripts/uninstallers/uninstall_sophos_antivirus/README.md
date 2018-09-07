@@ -1,1 +1,0 @@
-This script uninstalls Sophos Anti-Virus on Mac OS X 10.5.x and later. It should stop the Sophos AV software and remove all Sophos application and component files.
