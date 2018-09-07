@@ -1,13 +1,12 @@
 #!/bin/bash
-# Modified 6/15/2018
-Version=1.3
+# Modified 9/7/2018
+Version=1.3.1
 # Original source is from MigrateUserHomeToDomainAcct.sh
 # Written by Patrick Gallagher - https://twitter.com/patgmac
-#
 # Guidance and inspiration from Lisa Davies:
 # http://lisacherie.com/?p=239
-#
 # Modified by Rich Trouton
+# Modified by Ashley Smith
 #
 # Version 1.0 - Migrates an Active Directory mobile account to a local account by the following process:
 
@@ -68,7 +67,14 @@ Version=1.3
 # Fix to account password backup and restore process. Previous versions 
 # of the script were adding extra quote marks to the account's plist 
 # file located in /var/db/dslocal/nodes/Default/users/.
-
+# Version 1.3.1
+#
+# Changes (for automation):
+# 
+# 1. Removed user choice for unbind to AD. Set to always unbind if bound. 
+# 2. Removed user selection. A loop will convert all AD users on the machine.
+# 3. Give each converted account local admin rights.
+ 
 clear
 
 listUsers="$(/usr/bin/dscl . list /Users UniqueID | awk '$2 > 1000 {print $1}') FINISHED"
@@ -115,22 +121,17 @@ RemoveAD(){
 
 RunAsRoot "${0}"
 
-# Check for AD binding and offer to unbind if found. 
+# Check for AD binding and unbind if found. 
 if [[ "${check4AD}" = "Active Directory" ]]; then
-	/usr/bin/printf "This machine is bound to Active Directory.\nDo you want to unbind this Mac from AD?\n"
-		select yn in "Yes" "No"; do
-			case $yn in
-			    Yes) RemoveAD; /bin/echo "AD binding has been removed."; break;;
-			    No) /bin/echo "Active Directory binding is still active."; break;;
-			esac
-		done
+	RemoveAD; /bin/echo "AD binding has been removed.";
 fi
 
+# Loop through $listUsers, check whether each user is a mobile AD account. If yes, convert to a local account.
 until [ "$user" == "FINISHED" ]; do
+  echo $listUsers
+	for netname in $listUsers; do
+		/bin/echo "Converting $netname to local account"
 
-	/usr/bin/printf "%b" "\a\n\nSelect a user to convert or select FINISHED:\n" >&2
-	select netname in $listUsers; do
-	
 		if [ "$netname" = "FINISHED" ]; then
 			/bin/echo "Finished converting users to local accounts"
 			exit 0
@@ -209,14 +210,9 @@ until [ "$user" == "FINISHED" ]; do
 			/bin/echo "Displaying user and group information for the $netname account"
 			/usr/bin/id $netname
 			
-			# Prompt to see if the local account should be give admin rights.
+			# Give the local account admin rights.
 			
-			/bin/echo "Do you want to give the $netname account admin rights?"
-			select yn in "Yes" "No"; do
-    				case $yn in
-        				Yes) /usr/sbin/dseditgroup -o edit -a "$netname" -t user admin; /bin/echo "Admin rights given to this account"; break;;
-        				No ) /bin/echo "No admin rights given"; break;;
-    				esac
+			/usr/sbin/dseditgroup -o edit -a "$netname" -t user admin; /bin/echo "Admin rights given to $netname"; break;
 			done
 			break
 	done
